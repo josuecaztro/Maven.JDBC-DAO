@@ -2,10 +2,8 @@ package daos;
 
 import com.mysql.cj.protocol.Resultset;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Person implements DAO {
@@ -75,6 +73,17 @@ public class Person implements DAO {
         this.city = city;
     }
 
+    private Person extractResults(ResultSet rs) throws SQLException {
+        Person person = new Person();
+        person.setPersonID(rs.getInt("personID"));
+        person.setLastName(rs.getString("lastname"));
+        person.setFirstName(rs.getString("firstname"));
+        person.setAddress(rs.getString("address"));
+        person.setCity(rs.getString("city"));
+        System.out.println("Found " + person.getFirstName() + " " + person.getLastName());
+        return person;
+    }
+
 
     @Override
     public Object findById(int id) {
@@ -83,15 +92,7 @@ public class Person implements DAO {
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT * FROM PERSONS WHERE PERSONID=" + id);
         if (rs.next()){
-            Person person = new Person();
-            person.setPersonID(rs.getInt("personID"));
-            person.setLastName(rs.getString("lastname"));
-            person.setFirstName(rs.getString("firstname"));
-            person.setAddress(rs.getString("address"));
-            person.setCity(rs.getString("city"));
-            System.out.println(person);
-//            System.out.println("I found " + person.getFirstName() + " " + person.getLastName() + "!");
-            return person;
+            return extractResults(rs);
         }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,6 +102,19 @@ public class Person implements DAO {
 
     @Override
     public List findAll() {
+        Connection connection = ConnectionFactory.getConnection();
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rss = stmt.executeQuery("SELECT * FROM PERSONS");
+            List<Person> allPeople = new ArrayList();
+            while (rss.next()){
+                Person aPerson = extractResults(rss);
+                allPeople.add(aPerson);
+            }
+            return allPeople;
+        } catch (SQLException e){
+            e.printStackTrace();;
+        }
         return List.of();
     }
 
@@ -110,13 +124,33 @@ public class Person implements DAO {
     }
 
     @Override
-    public Object create(Object dto) {
+    public Object create(Person dto) {
+        Connection connection = ConnectionFactory.getConnection();
+        try {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO PERSONS VALUES (?,?,?,?,?);");
+            ps.setInt(1, dto.getPersonID());
+            ps.setString(2, dto.getLastName());
+            ps.setString(3, dto.getFirstName());
+            ps.setString(4, dto.getAddress());
+            ps.setString(5, dto.getCity());
+            ps.executeUpdate();
+            System.out.println("New person created to table.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
     public void delete(int id) {
-
+        Connection connection = ConnectionFactory.getConnection();
+        try{
+        Statement stmt = connection.createStatement();
+        stmt.executeUpdate("DELETE FROM PERSONS WHERE PERSONID=" + id);
+            System.out.println("Person deleted from records.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

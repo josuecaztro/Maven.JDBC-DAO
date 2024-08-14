@@ -1,5 +1,4 @@
 package daos;
-
 import com.mysql.jdbc.Driver;
 
 import java.sql.Connection;

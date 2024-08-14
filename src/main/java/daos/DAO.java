@@ -9,7 +9,7 @@ public interface DAO<T> {
 
     public T update(T dto);
 
-    public T create(T dto);
+    public T create(Person dto);
 
     public void delete(int id);
 }
