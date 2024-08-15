@@ -7,7 +7,7 @@ public interface DAO<T> {
 
     public List<T> findAll();
 
-    public T update(T dto);
+    public T update(Person dto);
 
     public T create(Person dto);
 

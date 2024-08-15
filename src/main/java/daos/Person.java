@@ -119,7 +119,20 @@ public class Person implements DAO {
     }
 
     @Override
-    public Object update(Object dto) {
+    public Object update(Person dto) {
+        Connection connection = ConnectionFactory.getConnection();
+        try {
+        PreparedStatement ps = connection.prepareStatement("UPDATE PERSONS SET LASTNAME=?, FIRSTNAME=?, ADDRESS=?, CITY=? WHERE PERSONID=?");
+        ps.setString(1, dto.getLastName());
+        ps.setString(2, dto.getFirstName());
+        ps.setString(3, dto.getAddress());
+        ps.setString(4, dto.getCity());
+        ps.setInt(5, dto.getPersonID());
+        ps.executeUpdate();
+            System.out.println("The values for " + dto.getFirstName() + " have been updated.");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
         return null;
     }
 
