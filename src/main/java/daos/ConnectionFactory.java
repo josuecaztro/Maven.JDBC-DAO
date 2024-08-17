@@ -1,5 +1,5 @@
 package daos;
-import com.mysql.jdbc.Driver;
+import com.mysql.cj.jdbc.Driver;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,10 +20,10 @@ public class ConnectionFactory {
             throw new RuntimeException("ERROR! Connecting to database failed.", ex);
         }
     }
-//
-//    public static void main(String[] args) {
-//        Connection connection = ConnectionFactory.getConnection();
-//    }
+
+    public static void main(String[] args) {
+        Connection connection = ConnectionFactory.getConnection();
+    }
 
 
 }
